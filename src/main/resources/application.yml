@@ -68,7 +68,17 @@ spring:
         - id: api
           uri: http://localhost:9097/
           predicates:
-            - Path=/api/**       
+            - Path=/api/** 
+        - id: oauth2
+          uri: http://localhost:8099/
+          predicates:
+            - Path=/auth/**
+          filters:
+            - name: Oauth2Filter
+              args:
+                baseMessage: Spring Cloud Gateway Oauth2Filter
+                preLogger: true
+                postLogger: true      
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:log4jdbc:postgresql://3.36.228.160:5432/core
