@@ -1,0 +1,79 @@
+server:
+  port: 9090
+
+logging:
+  config: classpath:log4j2.xml
+ 
+spring:
+  config:
+    activate:
+      on-profile: default
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:9090"       
+            allow-credentials: true
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - OPTIONS
+              - DELETE     
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway GlobalFilter
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: home
+          uri: http://localhost:9091/
+          predicates:
+            - Path=/
+          filters:               
+            - RewritePath=/(?<uri>.*), /front/${uri} 
+        - id: front
+          uri: http://localhost:9091/
+          predicates:
+            - Path=/front/**                                
+        - id: master
+          uri: http://localhost:9092/
+          predicates:
+            - Path=/master/**
+        - id: aps
+          uri: http://localhost:9093/
+          predicates:
+            - Path=/aps/**               
+        - id: pop
+          uri: http://localhost:9094/
+          predicates:
+            - Path=/pop/**              
+        - id: product
+          uri: http://localhost:9095/
+          predicates:
+            - Path=/product/**
+        - id: report
+          uri: http://localhost:9096/
+          predicates:
+            - Path=/report/**        
+        - id: api
+          uri: http://localhost:9097/
+          predicates:
+            - Path=/api/**       
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:log4jdbc:postgresql://3.36.228.160:5432/core
+#    url: jdbc:log4jdbc:postgresql://localhost:5432/core
+    password: 1111
+    username: postgres      
+mybatis:
+  mapper-locations: classpath:sql/mapper/**/**.xml
